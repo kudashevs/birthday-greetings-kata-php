@@ -1,9 +1,9 @@
 {
-    "name": "xpug/birthday-greetings-kata",
-    "description": "Birthday Greetings Kata in PHP",
+    "name": "kudashevs/birthday-greetings-kata-php",
+    "description": "Birthday Greetings Kata a PHP version",
     "type": "project",
     "require": {
-        "php": ">=7.4",
+        "php": ">=8.1",
         "phpmailer/phpmailer": "^6.8"
     },
     "require-dev": {
