@@ -4,13 +4,13 @@
          bootstrap="vendor/autoload.php"
          colors="true">
     <testsuites>
-        <testsuite name="Birthday Greetings Test Suite">
+        <testsuite name="Birthday Greetings Kata Tests Suite">
             <directory suffix="Test.php">tests</directory>
         </testsuite>
     </testsuites>
-    <coverage>
+    <source>
         <include>
-            <directory suffix=".php">src/main/php</directory>
+            <directory suffix=".php">src/birthday_greetings</directory>
         </include>
-    </coverage>
+    </source>
 </phpunit> 
