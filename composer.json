@@ -21,5 +21,9 @@
         "psr-4": {
             "birthday_greetings\\": "tests/birthday_greetings/"
         }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit --no-coverage",
+        "test-coverage":  "vendor/bin/phpunit --coverage-html build/coverage"
     }
 } 
