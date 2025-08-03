@@ -1,9 +1,10 @@
-bin
-target
-.idea
-out
-target
-
-vendor
+.idea/
+.fleet/
+.vscode/
+bin/
+build/
+target/
+vendor/
 .phpunit.result.cache
+composer.lock
 smtpmock
