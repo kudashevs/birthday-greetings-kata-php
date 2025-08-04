@@ -27,7 +27,7 @@ You can check received emails in your browser at http://localhost:1080
 ## Project Structure
 
 - `src/birthday_greetings/` - Main application code
-- `tests/` - Test code
+- `tests/birthday_greetings/` - Test code
 - `employee_data.txt` - Sample employee data file
 
 
