@@ -2,44 +2,65 @@
 
 namespace birthday_greetings;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Process\Process;
 
 class AcceptanceTest extends TestCase
 {
-    private const SMTP_PORT = 1025; // MailDev's default SMTP port
-    private const API_URL = 'http://localhost:8025';
+    private const SMTP_HOST = 'localhost';
+
+    private const SMTP_PORT = 1025;
+
+    private const WEB_SCHEMA = 'http://';
+
+    private const WEB_HOST = 'localhost';
+
+    private const WEB_PORT = 8025;
+
     private BirthdayService $birthdayService;
 
     protected function setUp(): void
     {
+        $this->startMailer();
+
         $this->birthdayService = new BirthdayService();
+    }
+
+    private function startMailer(): void
+    {
+        $checkDockerCompose = Process::fromShellCommandline('docker-compose');
+        $checkDockerCompose->run();
+
+        if (0 !== $checkDockerCompose->getExitCode()) {
+            $this->markTestSkipped('To run this test suite you should have docker-compose installed.');
+        }
+
+        Process::fromShellCommandline('docker stop amailer')->run();
+        Process::fromShellCommandline('docker compose up -d')->run();
+    }
+
+    protected function tearDown(): void
+    {
+        $this->stopMailer();
+    }
+
+    private function stopMailer(): void
+    {
         $this->deleteAllEmails();
+
+        Process::fromShellCommandline('docker compose down')->run();
     }
 
-    private function deleteAllEmails(): void
-    {
-        file_get_contents(self::API_URL . '/api/v1/messages', false, stream_context_create([
-            'http' => ['method' => 'DELETE']
-        ]));
-    }
-
-    private function getEmails(): array
-    {
-        $response = file_get_contents(self::API_URL . '/api/v1/messages');
-        return json_decode($response, true) ?? [];
-    }
-
-    public function testWillSendGreetingsWhenItsSomebodysBirthday(): void
+    #[Test]
+    public function it_sends_email_when_somebodys_birthday(): void
     {
         $this->birthdayService->sendGreetings(
             'employee_data.txt',
             new XDate('2008/10/08'),
-            'localhost',
+            self::SMTP_HOST,
             self::SMTP_PORT
         );
-
-        // Wait for email to be processed
-        sleep(1);
 
         $messages = $this->getEmails();
         $this->assertCount(1, $messages, 'message not sent?');
@@ -51,19 +72,35 @@ class AcceptanceTest extends TestCase
         $this->assertEquals('john.doe@foobar.com', $message['Content']['Headers']['To'][0]);
     }
 
-    public function testWillNotSendEmailsWhenNobodysBirthday(): void
+    #[Test]
+    public function it_does_not_send_email_nobodys_birthday(): void
     {
         $this->birthdayService->sendGreetings(
             'employee_data.txt',
             new XDate('2008/01/01'),
-            'localhost',
+            self::SMTP_HOST,
             self::SMTP_PORT
         );
 
-        // Wait for any potential emails to be processed
-        sleep(1);
-
         $emails = $this->getEmails();
         $this->assertCount(0, $emails, 'Expected no emails to be sent');
+    }
+
+    private function getEmails(): array
+    {
+        $response = file_get_contents($this->generateMailerUrl() . '/api/v1/messages');
+        return json_decode($response, true) ?? [];
+    }
+
+    private function deleteAllEmails(): void
+    {
+        file_get_contents($this->generateMailerUrl() . '/api/v1/messages', false, stream_context_create([
+            'http' => ['method' => 'DELETE']
+        ]));
+    }
+
+    private function generateMailerUrl(): string
+    {
+        return sprintf('%s%s:%s', self::WEB_SCHEMA, self::WEB_HOST, self::WEB_PORT);
     }
 }

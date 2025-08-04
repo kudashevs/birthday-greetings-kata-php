@@ -16,12 +16,11 @@ cd birthday-greetings-kata-php
 composer install
 ```
 
-Run docker compose. Then, run tests:
+Then, run tests:
 ```bash
-docker-compose up -d
 vendor/bin/phpunit
 ```
-You can check received emails in your browser at http://localhost:1080
+**Note**: the acceptance tests are pretty slow. You might want to rewrite them.
 
 
 ## Project Structure
