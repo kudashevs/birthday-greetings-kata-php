@@ -18,7 +18,7 @@ composer install
 
 Run docker compose. Then, run tests:
 ```bash
-docker-composer up -d
+docker-compose up -d
 vendor/bin/phpunit
 ```
 You can check received emails in your browser at http://localhost:1080
