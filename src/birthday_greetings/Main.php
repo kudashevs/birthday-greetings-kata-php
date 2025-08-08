@@ -1,6 +1,6 @@
 <?php
 
-namespace birthday_greetings;
+namespace BirthdayGreetings;
 
 
 require_once __DIR__ . '/../../vendor/autoload.php';

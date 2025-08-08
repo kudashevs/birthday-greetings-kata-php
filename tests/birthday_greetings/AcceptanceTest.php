@@ -1,7 +1,9 @@
 <?php
 
-namespace birthday_greetings;
+namespace BirthdayGreetings\Tests;
 
+use BirthdayGreetings\BirthdayService;
+use BirthdayGreetings\XDate;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\Process;

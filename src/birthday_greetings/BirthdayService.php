@@ -1,6 +1,6 @@
 <?php
 
-namespace birthday_greetings;
+namespace BirthdayGreetings;
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;

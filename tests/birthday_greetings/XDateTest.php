@@ -1,7 +1,8 @@
 <?php
 
-namespace birthday_greetings;
+namespace BirthdayGreetings\Tests;
 
+use BirthdayGreetings\XDate;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 

@@ -15,12 +15,12 @@
     },
     "autoload": {
         "psr-4": {
-            "birthday_greetings\\": "src/birthday_greetings/"
+            "BirthdayGreetings\\": "src/birthday_greetings/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "birthday_greetings\\": "tests/birthday_greetings/"
+            "BirthdayGreetings\\Tests\\": "tests/birthday_greetings/"
         }
     },
     "scripts": {

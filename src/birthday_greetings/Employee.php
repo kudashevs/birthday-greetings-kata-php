@@ -1,6 +1,6 @@
 <?php
 
-namespace birthday_greetings;
+namespace BirthdayGreetings;
 
 class Employee
 {
