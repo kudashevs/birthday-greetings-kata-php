@@ -3,6 +3,7 @@
 namespace BirthdayGreetings\Tests;
 
 use BirthdayGreetings\BirthdayService;
+use BirthdayGreetings\Mail\PHPMailerService;
 use BirthdayGreetings\XDate;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -25,7 +26,8 @@ class AcceptanceTest extends TestCase
     {
         $this->checkSmtpConnection();
 
-        $this->birthdayService = new BirthdayService();
+        $mailer = new PHPMailerService(self::SMTP_HOST, self::SMTP_PORT, 'sender@here.com');
+        $this->birthdayService = new BirthdayService($mailer);
     }
 
     private function checkSmtpConnection(): void
@@ -50,8 +52,6 @@ class AcceptanceTest extends TestCase
         $this->birthdayService->sendGreetings(
             'employee_data.txt',
             new XDate('2008/10/08'),
-            self::SMTP_HOST,
-            self::SMTP_PORT
         );
 
         $messages = $this->getEmails();
@@ -70,8 +70,6 @@ class AcceptanceTest extends TestCase
         $this->birthdayService->sendGreetings(
             'employee_data.txt',
             new XDate('2008/01/01'),
-            self::SMTP_HOST,
-            self::SMTP_PORT
         );
 
         $emails = $this->getEmails();

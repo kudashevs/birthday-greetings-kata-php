@@ -2,12 +2,20 @@
 
 namespace BirthdayGreetings;
 
+use BirthdayGreetings\Mail\PHPMailerService;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 class BirthdayService
 {
-    public function sendGreetings(string $fileName, XDate $xDate, string $smtpHost, int $smtpPort): void
+    private PHPMailerService $mailer;
+
+    public function __construct(PHPMailerService $mailer)
+    {
+        $this->mailer = $mailer;
+    }
+
+    public function sendGreetings(string $fileName, XDate $xDate): void
     {
         $handle = fopen($fileName, 'r');
         if ($handle === false) {
@@ -28,7 +36,7 @@ class BirthdayService
                     $recipient = $employee->getEmail();
                     $body = str_replace('%NAME%', $employee->getFirstName(), 'Happy Birthday, dear %NAME%');
                     $subject = 'Happy Birthday!';
-                    $this->sendMessage($smtpHost, $smtpPort, 'sender@here.com', $subject, $body, $recipient);
+                    $this->mailer->sendMessage($subject, $body, $recipient);
                 }
             } catch (\Exception $e) {
                 // Log error and continue with next employee
@@ -38,31 +46,5 @@ class BirthdayService
         }
 
         fclose($handle);
-    }
-
-    private function sendMessage(string $smtpHost, int $smtpPort, string $sender, string $subject, string $body, string $recipient): void
-    {
-        $mail = new PHPMailer(true);
-
-        try {
-            // Server settings
-            $mail->isSMTP();
-            $mail->Host = $smtpHost;
-            $mail->Port = $smtpPort;
-            $mail->SMTPAuth = false;
-
-            // Recipients
-            $mail->setFrom($sender);
-            $mail->addAddress($recipient);
-
-            // Content
-            $mail->isHTML(false);
-            $mail->Subject = $subject;
-            $mail->Body = $body;
-
-            $mail->send();
-        } catch (Exception $e) {
-            throw new \RuntimeException("Message could not be sent. Mailer Error: {$mail->ErrorInfo}", 0, $e);
-        }
     }
 }
