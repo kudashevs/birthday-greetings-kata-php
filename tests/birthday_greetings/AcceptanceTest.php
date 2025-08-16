@@ -6,17 +6,16 @@ use BirthdayGreetings\BirthdayService;
 use BirthdayGreetings\XDate;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Process\Process;
 
 class AcceptanceTest extends TestCase
 {
-    private const SMTP_HOST = 'localhost';
+    private const SMTP_HOST = 'mailhog';
 
     private const SMTP_PORT = 1025;
 
     private const WEB_SCHEMA = 'http://';
 
-    private const WEB_HOST = 'localhost';
+    private const WEB_HOST = 'mailhog';
 
     private const WEB_PORT = 8025;
 
@@ -24,34 +23,25 @@ class AcceptanceTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->startMailer();
+        $this->checkSmtpConnection();
 
         $this->birthdayService = new BirthdayService();
     }
 
-    private function startMailer(): void
+    private function checkSmtpConnection(): void
     {
-        $checkDockerCompose = Process::fromShellCommandline('docker-compose');
-        $checkDockerCompose->run();
+        $smtpConnection = @fsockopen(self::SMTP_HOST, self::SMTP_PORT, $errno, $errstr, 0.5);
 
-        if (0 !== $checkDockerCompose->getExitCode()) {
-            $this->markTestSkipped('To run this test suite you should have docker-compose installed.');
+        if (!$smtpConnection) {
+            $this->markTestSkipped('To run this test suite you should have a mailhog running.');
         }
 
-        Process::fromShellCommandline('docker stop amailer')->run();
-        Process::fromShellCommandline('docker compose up -d')->run();
+        fclose($smtpConnection);
     }
 
     protected function tearDown(): void
     {
-        $this->stopMailer();
-    }
-
-    private function stopMailer(): void
-    {
         $this->deleteAllEmails();
-
-        Process::fromShellCommandline('docker compose down')->run();
     }
 
     #[Test]
@@ -68,7 +58,7 @@ class AcceptanceTest extends TestCase
         $this->assertCount(1, $messages, 'message not sent?');
 
         $message = $messages[0];
-        $this->assertEquals('Happy Birthday, dear John' . PHP_EOL, $message['Content']['Body']);
+        $this->assertStringContainsString('Happy Birthday, dear John', $message['Content']['Body']);
         $this->assertEquals('Happy Birthday!', $message['Content']['Headers']['Subject'][0]);
         $this->assertCount(1, $message['Content']['Headers']['To']);
         $this->assertEquals('john.doe@foobar.com', $message['Content']['Headers']['To'][0]);

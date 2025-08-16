@@ -16,9 +16,9 @@ WORKDIR /app
 # Copy application code
 COPY . /app/
 
-# Copy Composer files and install dependencies
+# Copy composer config files and install dependencies
 COPY composer.json composer.lock* /app/
 RUN composer install --no-interaction --optimize-autoloader
 
-# Command to run PHPUnit tests
+# Command to keep a container always running
 CMD ["tail", "-f", "/dev/null"]
