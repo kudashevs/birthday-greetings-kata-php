@@ -1,7 +1,26 @@
 services:
+  php:
+    container_name: birthday-greetings
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    image: birthday-greetings
+    volumes:
+      - .:/app
+    depends_on:
+      - mailhog
+    networks:
+      - app-network
+
   mailhog:
-    image: mailhog/mailhog
-    container_name: amailer
+    container_name: mailhog
+    image: mailhog/mailhog:latest
     ports:
-      - "1025:1025"
-      - "8025:8025"
+      - "1025:1025" # SMTP port
+      - "8025:8025" # GUI port
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
