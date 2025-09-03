@@ -4,6 +4,7 @@ services:
     build:
       context: ./
       dockerfile: ./Dockerfile
+    stop_grace_period: 0.5s
     image: birthday-greetings
     volumes:
       - .:/app
