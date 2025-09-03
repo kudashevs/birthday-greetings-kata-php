@@ -65,7 +65,7 @@ class AcceptanceTest extends TestCase
     }
 
     #[Test]
-    public function it_does_not_send_email_nobodys_birthday(): void
+    public function it_does_not_send_email_when_nobodys_birthday(): void
     {
         $this->birthdayService->sendGreetings(
             'employee_data.txt',
